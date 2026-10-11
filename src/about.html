@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jakat — About Zakat</title>
+<meta name="description" content="What Zakat is, who pays, nisab, zakatable wealth and when it is due.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#F4EDDD;--paper-2:#ECE3CC;--field:#FCFAF2;--ink:#16261E;--ink-soft:#43544A;--muted:#6E6857;--hair:#DCD2B6;--hair-strong:#C7BA98;--green:#0F3327;--cream:#F2E9D3;--gold:#A9812F;--gold-bright:#D2A94F;--gold-pale:#E9C87E}
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+  header{position:sticky;top:0;z-index:40;background:rgba(244,237,221,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+  .h-in{max-width:1160px;margin:0 auto;padding:13px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;color:var(--ink);text-decoration:none}
+  .brand svg{color:var(--gold);flex:none}.brand b{font-family:Fraunces,serif;font-size:19px;font-weight:600;display:block;line-height:1.05}
+  .brand span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .h-right{display:flex;gap:8px;align-items:center}
+  .h-link{font-size:13px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:6px 10px;border-radius:999px}
+  .h-link:hover{color:var(--green);background:rgba(169,129,47,.12)}
+  .h-link.on{color:var(--green);background:rgba(169,129,47,.14)}
+  .hero{padding:56px 0 30px;max-width:640px}
+  .kicker{display:flex;align-items:center;gap:12px;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  .kicker::before{content:'';width:34px;height:1px;background:var(--gold)}
+  h1{font-family:Fraunces,serif;font-weight:540;font-size:clamp(2.2rem,4.5vw,3.2rem);line-height:1.05}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{margin-top:14px;color:var(--ink-soft);font-size:16px;max-width:56ch}
+  .card{background:var(--field);border:1px solid var(--hair);border-radius:18px;padding:30px;margin:26px 0}
+  .card h2{font-family:Fraunces,serif;font-size:22px;font-weight:560;margin-bottom:8px}
+  .card p,.card li{color:var(--ink-soft)}.card ul,.card ol{padding-left:20px;margin-top:8px;display:grid;gap:6px}
+  .example{background:rgba(15,51,39,.06);border:1px solid var(--hair);border-radius:12px;padding:16px;text-align:center;margin-top:14px;color:var(--ink)}
+  .cta{display:inline-flex;align-items:center;justify-content:center;padding:12px 28px;background:var(--green);color:var(--cream);border-radius:12px;text-decoration:none;font-weight:600;margin-top:6px}
+  .cta:hover{background:#143d30}
+  footer{padding:36px 0 46px}.f-in{display:flex;gap:16px;align-items:flex-start}
+  .f-in svg{color:var(--gold);flex:none;margin-top:3px}.f-in p{font-size:13px;color:var(--muted);max-width:78ch}
+  .f-ar{font-family:Amiri,serif;font-size:19px;color:var(--gold);margin-top:8px!important}
+  @media(max-width:720px){.wrap,.h-in{padding-left:18px;padding-right:18px}.h-link{display:none}.card{padding:22px}}
+</style>
+</head>
+<body>
+<header><div class="h-in">
+<a class="brand" href="./index.html"><svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></svg><div><b>Jakat</b><span>Zakat Calculator · UK</span></div></a>
+<div class="h-right"><a class="h-link" href="./index.html#calculate">Calculator</a><a class="h-link on" href="./about.html">About</a><a class="h-link" href="./nisab.html">Nisab</a></div>
+</div></header>
+<main class="wrap">
+<section class="hero"><p class="kicker">Learn · Zakat al-Mal</p><h1>What is <em>Zakat?</em></h1><p class="sub">The third pillar of Islam — purification of wealth and soul. Due when qualifying wealth stays above nisab for one lunar year.</p></section>
+<div class="card"><h2>The Five Pillars</h2><ol><li>Shahada (Faith)</li><li>Salah (Prayer)</li><li>Zakat (Charity)</li><li>Sawm (Fasting)</li><li>Hajj (Pilgrimage)</li></ol></div>
+<div class="card"><h2>Zakat rate — 2.5%</h2><p>2.5% of qualifying wealth held for one lunar year (hawl).</p><h2 style="margin-top:18px">Nisab threshold (09/10/2026)</h2><ul><li><strong>Silver:</strong> 612.36g = £896.93 (default)</li><li><strong>Gold:</strong> 87.48g = £8,885.68</li></ul></div>
+<div class="card"><h2>Who can receive (Qur'an 9:60)</h2><ul><li>The poor and needy</li><li>Those in debt</li><li>Travellers in difficulty</li><li>Causes in the path of Allah</li><li>New Muslims and those in captivity</li></ul></div>
+<div class="card"><h2>Zakatable wealth</h2><ul><li>Gold and silver at market value</li><li>Cash, savings, ISAs</li><li>Trade stock and inventory</li><li>Shares, funds, crypto</li><li>Investment property (home exempt)</li><li>Accessible pensions — opinions differ, ask a scholar</li></ul><div class="example">£10,000 net assets → <strong>£250 Zakat</strong> (2.5%).</div><p style="text-align:center;margin-top:16px"><a class="cta" href="./index.html">Calculate my Zakat</a></p></div>
+</main>
+<footer><div class="wrap f-in"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></svg><div><p><b>Jakat</b> offers general guidance, not a fatwa or financial advice. Consult a knowledgeable scholar about your own circumstances.</p><p class="f-ar">جزاكم الله خيرا</p></div></div></footer>
+</body>
+</html>

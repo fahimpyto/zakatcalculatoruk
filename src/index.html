@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jakat — Zakat Calculator (UK)</title>
+<meta name="description" content="A calm, precise Zakat calculator for the UK. Live nisab, silver or gold standard, every deduction accounted for.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EDDD; --paper-2:#ECE3CC; --field:#FCFAF2;
+    --ink:#16261E; --ink-soft:#43544A; --muted:#6E6857;
+    --hair:#DCD2B6; --hair-strong:#C7BA98;
+    --green:#0F3327; --cream:#F2E9D3; --gold:#A9812F; --gold-bright:#D2A94F; --gold-pale:#E9C87E;
+    --terra:#C45C2C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  ::selection{background:rgba(210,169,79,.35)}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:no-preference){
+    .hero,.s,.panel,.learn{animation:rise .7s cubic-bezier(.22,.8,.24,1) both}
+    .s:nth-of-type(1){animation-delay:.06s}.s:nth-of-type(2){animation-delay:.12s}
+    .s:nth-of-type(3){animation-delay:.18s}.s:nth-of-type(4){animation-delay:.24s}.s:nth-of-type(5){animation-delay:.3s}
+    .panel{animation-delay:.2s}
+  }
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:40;background:rgba(244,237,221,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--hair)}
+  .h-in{max-width:1160px;margin:0 auto;padding:13px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;color:var(--ink);text-decoration:none}
+  .brand svg{color:var(--gold);flex:none}
+  .brand b{font-family:Fraunces,serif;font-size:19px;font-weight:600;display:block;line-height:1.05}
+  .brand span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .h-right{display:flex;gap:8px;align-items:center}
+  .h-link{font-size:13px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:6px 10px;border-radius:999px;white-space:nowrap}
+  .h-link:hover{color:var(--green);background:rgba(169,129,47,.12)}
+  .h-link.on{color:var(--green);background:rgba(169,129,47,.14)}
+  #calculate{scroll-margin-top:84px}
+
+  /* ---------- hero ---------- */
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:36px;padding:60px 0 46px}
+  .kicker{display:flex;align-items:center;gap:12px;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  .kicker::before{content:'';width:34px;height:1px;background:var(--gold)}
+  h1{font-family:Fraunces,serif;font-weight:540;font-size:clamp(2.4rem,5vw,3.85rem);line-height:1.04;letter-spacing:-.01em;max-width:14ch}
+  h1 em{font-style:italic;color:var(--gold);font-weight:470}
+  .sub{margin-top:18px;max-width:52ch;color:var(--ink-soft);font-size:16px;line-height:1.65}
+  .hero-note{display:flex;align-items:center;gap:9px;margin-top:22px;font-size:13px;color:var(--muted)}
+  .hero-note svg{color:var(--gold);flex:none}
+  .hero-medal{position:relative;width:228px;aspect-ratio:1;flex:none}
+  .hero-medal svg.medal{position:absolute;inset:0;width:100%;height:100%}
+  .medal-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .medal-txt .ar{font-family:Amiri,serif;font-size:62px;line-height:1;color:var(--green)}
+  .medal-txt .cap{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:56px;align-items:start}
+
+  /* ---------- ledger sections ---------- */
+  .s{margin-top:46px}
+  .s-head{display:flex;align-items:baseline;gap:14px}
+  .s-num{font-family:Fraunces,serif;font-style:italic;color:var(--gold);font-size:15px;flex:none}
+  .s-head h2{font-family:Fraunces,serif;font-weight:560;font-size:23px;letter-spacing:-.01em}
+  .s-head::after{content:'';flex:1;height:1px;background:var(--hair);transform:translateY(-5px)}
+  .s-cap{margin:6px 0 8px;font-size:13px;color:var(--muted)}
+  .row{display:flex;align-items:flex-end;gap:12px;padding:9px 0}
+  .lbl{font-size:14.5px;font-weight:500;color:var(--ink-soft);max-width:calc(100% - 158px)}
+  .lbl .hint{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+  .lead{flex:1;min-width:16px;border-bottom:1px dotted var(--hair-strong);margin-bottom:12px;transition:border-color .2s}
+  .row:hover .lead{border-color:var(--gold)}
+  .amt{position:relative;width:150px;flex:none}
+  .amt .gbp{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;font-weight:600;pointer-events:none}
+  .amt input{width:100%;background:var(--field);border:1px solid var(--hair);border-radius:10px;padding:9px 12px 9px 26px;font:600 16px 'Instrument Sans',sans-serif;color:var(--ink);text-align:right;transition:border-color .2s,box-shadow .2s}
+  .amt input::placeholder{color:#B9AF93;font-weight:500}
+  .amt input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(169,129,47,.16)}
+  .subtot{display:flex;justify-content:flex-end;align-items:baseline;gap:10px;margin-top:8px;padding-top:11px;border-top:1px solid var(--hair)}
+  .subtot span{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .subtot b{font-family:Fraunces,serif;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+
+  /* ---------- nisab section ---------- */
+  .seg{position:relative;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair-strong);border-radius:13px;padding:4px;margin:18px 0 8px;background:var(--field)}
+  .seg-pill{position:absolute;top:4px;left:4px;bottom:4px;width:calc(50% - 4px);background:var(--green);border-radius:10px;transition:transform .35s cubic-bezier(.22,.8,.24,1)}
+  .seg[data-std="gold"] .seg-pill{transform:translateX(100%)}
+  .seg button{position:relative;z-index:1;background:none;border:none;padding:9px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:10px;color:var(--muted);transition:color .25s;font-family:inherit}
+  .seg button b{font-size:13.5px;font-weight:600}
+  .seg button i{font-style:normal;font-size:11px;opacity:.8;font-variant-numeric:tabular-nums}
+  .seg button.on{color:var(--cream)}
+  .seg button.on i{color:var(--gold-bright);opacity:1}
+  .row.dim .lbl,.row.dim .lead,.row.dim .amt{opacity:.4}
+  .nisab-calc{font-family:Fraunces,serif;font-size:17.5px;color:var(--ink);margin-top:14px}
+  .nisab-calc b{color:var(--gold);font-weight:600}
+  .nisab-note{margin-top:8px;font-size:12.5px;color:var(--muted);max-width:54ch}
+
+  /* ---------- summary panel ---------- */
+  .panel{position:sticky;overflow:hidden;border-radius:20px;background:var(--green);color:var(--cream);box-shadow:0 30px 60px -22px rgba(15,51,39,.5),inset 0 0 0 1px rgba(210,169,79,.22);top:84px}
+  .p-pat{position:absolute;inset:0;width:100%;height:100%;-webkit-mask-image:linear-gradient(#000,transparent 78%);mask-image:linear-gradient(#000,transparent 78%)}
+  .panel-in{position:relative;padding:26px 26px 24px}
+  .p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+  .p-head h3{font-family:Fraunces,serif;font-weight:560;font-size:20px}
+  .p-head p{font-size:12px;color:rgba(242,233,211,.55);margin-top:3px}
+  .p-ar{font-family:Amiri,serif;font-size:44px;line-height:1;color:var(--gold-bright)}
+  .p-rows{margin-top:22px}
+  .p-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(242,233,211,.14)}
+  .p-row span{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:rgba(242,233,211,.55)}
+  .p-row b{font-family:Fraunces,serif;font-weight:560;font-size:19px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .p-row.net span{color:rgba(242,233,211,.8)}
+  .p-row.net b{color:var(--gold-pale)}
+  .m-track{position:relative;height:14px;background:rgba(242,233,211,.1);border-radius:999px;margin-top:30px}
+  .m-fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;width:0;transition:width .6s cubic-bezier(.22,.8,.24,1),background-color .3s}
+  .m-track.ok .m-fill{background:var(--gold-bright)}
+  .m-track.low .m-fill{background:var(--terra)}
+  .m-track.none .m-fill{background:#5E7263}
+  .m-tick{position:absolute;top:-6px;bottom:-6px;width:2px;background:rgba(242,233,211,.75);transition:left .6s cubic-bezier(.22,.8,.24,1)}
+  .m-tick i{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,233,211,.65);white-space:nowrap}
+  .m-scale{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(242,233,211,.5);font-variant-numeric:tabular-nums}
+  .chip{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.04em}
+  .chip .dot{width:7px;height:7px;border-radius:50%}
+  .c-ok{background:rgba(210,169,79,.16);color:var(--gold-pale)}.c-ok .dot{background:var(--gold-bright)}
+  .c-low{background:rgba(196,92,44,.2);color:#E8A57C}.c-low .dot{background:var(--terra)}
+  .c-none{background:rgba(242,233,211,.1);color:#B9C4B4}.c-none .dot{background:#8AA08F}
+  .chip.pop{animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+  .sentence{margin-top:11px;font-size:13px;line-height:1.6;color:rgba(242,233,211,.8);min-height:2.6em}
+  .p-due{margin-top:24px;padding-top:22px;border-top:1px solid rgba(210,169,79,.32)}
+  .due-lbl{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,233,211,.6)}
+  .due-num{font-family:Fraunces,serif;font-weight:560;font-size:clamp(44px,4.5vw,58px);line-height:1.05;color:var(--gold-pale);margin-top:8px;font-variant-numeric:tabular-nums}
+  .due-num .gbp{font-size:.42em;font-weight:500;opacity:.8;margin-right:6px;vertical-align:.42em}
+  .meals{margin-top:10px;font-size:13px;color:rgba(242,233,211,.75)}
+  .reset{margin-top:22px;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:none;border:1px solid rgba(242,233,211,.28);color:var(--cream);border-radius:12px;padding:11px;font:600 13.5px 'Instrument Sans',sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+  .reset:hover{background:rgba(242,233,211,.08);border-color:rgba(210,169,79,.55)}
+
+  /* ---------- learn ---------- */
+  .learn{margin-top:88px;background:var(--paper-2);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:62px 28px 70px;margin-left:-28px;margin-right:-28px}
+  .learn-in{max-width:1104px;margin:0 auto}
+  .learn h2{font-family:Fraunces,serif;font-weight:560;font-size:30px;letter-spacing:-.01em}
+  .lk{color:var(--muted);font-size:14.5px;margin:8px 0 28px;max-width:56ch}
+  .qa{border-top:1px solid var(--hair)}
+  .qa:last-child{border-bottom:1px solid var(--hair)}
+  .q{width:100%;display:flex;align-items:center;gap:18px;padding:19px 2px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit}
+  .qn{font-family:Fraunces,serif;font-style:italic;color:var(--gold);font-size:14px;width:26px;flex:none}
+  .qt{font-family:Fraunces,serif;font-size:19px;font-weight:560;color:var(--ink);flex:1}
+  .q svg{flex:none;color:var(--muted);transition:transform .35s,color .25s}
+  .qa.open .q svg{transform:rotate(45deg);color:var(--gold)}
+  .a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.22,.8,.24,1)}
+  .qa.open .a{grid-template-rows:1fr}
+  .a-in{overflow:hidden}
+  .a p{margin:0 0 20px 44px;max-width:66ch;color:var(--ink-soft);font-size:15px;line-height:1.7}
+
+  /* ---------- footer / toast / mobile bar ---------- */
+  footer{padding:36px 0 46px}
+  .f-in{display:flex;gap:16px;align-items:flex-start}
+  .f-in svg{color:var(--gold);flex:none;margin-top:3px}
+  .f-in p{font-size:13px;line-height:1.7;color:var(--muted);max-width:78ch}
+  .f-ar{font-family:Amiri,serif;font-size:19px;color:var(--gold);margin-top:8px!important}
+  #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:.35s;z-index:60;box-shadow:0 10px 30px rgba(22,38,30,.35)}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  #mbar{display:none}
+
+  @media (max-width:1020px){
+    .layout{grid-template-columns:1fr;gap:44px}
+    .panel{position:static}
+    #mbar{display:flex;position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:50;background:var(--green);color:var(--cream);border:none;border-radius:16px;padding:13px 18px;align-items:center;gap:12px;cursor:pointer;font-family:inherit;box-shadow:0 18px 40px -12px rgba(15,51,39,.55),inset 0 0 0 1px rgba(210,169,79,.25)}
+    .mb-l b{display:block;font-size:13.5px;font-weight:600}
+    .mb-l i{display:block;font-style:normal;font-size:11px;color:rgba(242,233,211,.6)}
+    .mb-r{margin-left:auto;font-family:Fraunces,serif;font-weight:560;font-size:22px;color:var(--gold-pale);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px}
+    body{padding-bottom:104px}
+    #toast{bottom:calc(92px + env(safe-area-inset-bottom))}
+  }
+  @media (max-width:720px){
+    .wrap,.h-in{padding-left:18px;padding-right:18px}
+    .hero{flex-direction:column-reverse;align-items:flex-start;gap:26px;padding-top:44px;padding-bottom:38px}
+    .hero-medal{width:136px}
+    .medal-txt .ar{font-size:38px}
+    .medal-txt .cap{font-size:7.5px}
+    .h-link{display:none}
+    .learn{margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px}
+  }
+  @media (max-width:480px){
+    .amt{width:128px}
+    .lbl{max-width:calc(100% - 136px);font-size:13.5px}
+    .row{gap:9px}
+    .panel-in{padding:20px}
+    .learn h2{font-size:25px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-in">
+    <a class="brand" href="./index.html" aria-label="Jakat home">
+      <svg viewBox="0 0 24 24" width="27" height="27" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></svg>
+      <div><b>Jakat</b><span>Zakat Calculator · UK</span></div>
+    </a>
+    <div class="h-right">
+      <a class="h-link on" href="#calculate">Calculator</a>
+      <a class="h-link" href="./about.html">About</a>
+      <a class="h-link" href="./nisab.html">Nisab</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- hero -->
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="kicker">Zakat al-Mal · 2.5% · One lunar year</p>
+      <h1>How much <em>Zakat</em> do you owe?</h1>
+      <p class="sub">A calm, precise calculator for the UK. List what you own and what you owe, set today's nisab rate, and your 2.5% is worked out live — to the penny.</p>
+      <p class="hero-note">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></svg>
+        Defaults to the silver nisab — the standard most UK scholars and institutions recommend.
+      </p>
+    </div>
+    <div class="hero-medal" aria-hidden="true">
+      <svg class="medal" viewBox="0 0 220 220" fill="none">
+        <circle cx="110" cy="110" r="104" stroke="#A9812F" stroke-width=".8" opacity=".35"/>
+        <rect x="40" y="40" width="140" height="140" stroke="#A9812F" stroke-width="1.3"/>
+        <rect x="40" y="40" width="140" height="140" transform="rotate(45 110 110)" stroke="#A9812F" stroke-width="1.3"/>
+        <circle cx="110" cy="110" r="56" stroke="#A9812F" stroke-width="1" stroke-dasharray="1.5 6" opacity=".8"/>
+      </svg>
+      <div class="medal-txt"><span class="ar">زَكَاة</span><span class="cap">the purifying share</span></div>
+    </div>
+  </section>
+
+  <div class="layout" id="calculate">
+    <!-- ============ form column ============ -->
+    <div>
+      <section class="s">
+        <div class="s-head"><span class="s-num">01</span><h2>Cash &amp; savings</h2></div>
+        <p class="s-cap">Everything liquid, here and now.</p>
+        <div class="row">
+          <span class="lbl">Cash in hand &amp; current accounts<span class="hint">What you can spend today</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="cash" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Savings accounts &amp; ISAs<span class="hint">Including bonds and help-to-buy</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="savings" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Other cash<span class="hint">PayPal balance, prepaid cards, foreign currency</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="cashOther" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="subtot"><span>Section total</span><b id="sub1">£0.00</b></div>
+      </section>
+
+      <section class="s">
+        <div class="s-head"><span class="s-num">02</span><h2>Gold &amp; silver</h2></div>
+        <p class="s-cap">Jewellery, coins and bars — at today's market value, not the price you paid.</p>
+        <div class="row">
+          <span class="lbl">Gold — current market value<span class="hint">22k &amp; 24k jewellery, coins, bars</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="goldV" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Silver — current market value<span class="hint">Jewellery, utensils, bullion</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="silverV" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="subtot"><span>Section total</span><b id="sub2">£0.00</b></div>
+      </section>
+
+      <section class="s">
+        <div class="s-head"><span class="s-num">03</span><h2>Investments &amp; business</h2></div>
+        <p class="s-cap">Anything held with the intention to grow.</p>
+        <div class="row">
+          <span class="lbl">Shares &amp; funds<span class="hint">Stocks, invested ISAs, unit trusts</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="shares" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Cryptocurrency<span class="hint">Market value today</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="crypto" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Business stock &amp; trade goods<span class="hint">Inventory at sale value</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="stock" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Money owed to you<span class="hint">Debts you expect to get back</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="owedYou" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Accessible pension<span class="hint">Only if you can withdraw — opinions differ</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="pension" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="subtot"><span>Section total</span><b id="sub3">£0.00</b></div>
+      </section>
+
+      <section class="s">
+        <div class="s-head"><span class="s-num">04</span><h2>What you owe</h2></div>
+        <p class="s-cap">Deducted before the 2.5% is worked out.</p>
+        <div class="row">
+          <span class="lbl">Credit cards &amp; overdrafts<span class="hint">Balance due now</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="cards" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Bills &amp; rent arrears<span class="hint">Overdue, or due within the year</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="arrears" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Personal loans<span class="hint">Repayable within your zakat year</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="loans" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="row">
+          <span class="lbl">Money owed to family &amp; friends<span class="hint">Any outstanding personal debt</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="oweOthers" inputmode="decimal" autocomplete="off" placeholder="0.00"></span>
+        </div>
+        <div class="subtot"><span>Section total</span><b id="sub4">£0.00</b></div>
+      </section>
+
+      <section class="s">
+        <div class="s-head"><span class="s-num">05</span><h2>Nisab &amp; today's rates</h2></div>
+        <p class="s-cap">The minimum wealth threshold before Zakat applies. Silver £896.93 · Gold £8,885.68 (09/10/2026).</p>
+        <div class="seg" id="seg" data-std="silver" role="group" aria-label="Nisab standard">
+          <span class="seg-pill" aria-hidden="true"></span>
+          <button type="button" data-std="silver" class="on"><b>Silver nisab</b><i>612.36 g</i></button>
+          <button type="button" data-std="gold"><b>Gold nisab</b><i>87.48 g</i></button>
+        </div>
+        <div class="row rate-row gold dim">
+          <span class="lbl">Gold — price per gram<span class="hint">Check today's rate before paying</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="rateGold" inputmode="decimal" autocomplete="off" value="101.5738"></span>
+        </div>
+        <div class="row rate-row silver">
+          <span class="lbl">Silver — price per gram<span class="hint">Check today's rate before paying</span></span>
+          <span class="lead"></span>
+          <span class="amt"><span class="gbp">£</span><input id="rateSilver" inputmode="decimal" autocomplete="off" value="1.46471"></span>
+        </div>
+        <p class="nisab-calc" id="nisabCalc"></p>
+        <p class="nisab-note">These rates give Silver £896.93 and Gold £8,885.68 as of 09/10/2026 — edit them to match today's market (check goldprice.org or your local jeweller) before you work out what you owe.</p>
+      </section>
+    </div>
+
+    <!-- ============ summary panel ============ -->
+    <aside class="panel" id="summary" aria-live="polite">
+      <svg class="p-pat" aria-hidden="true">
+        <defs>
+          <pattern id="kh" width="84" height="84" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke="#D2A94F" stroke-opacity=".13">
+              <rect x="12.3" y="12.3" width="59.4" height="59.4"/>
+              <rect x="12.3" y="12.3" width="59.4" height="59.4" transform="rotate(45 42 42)"/>
+            </g>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#kh)"/>
+      </svg>
+      <div class="panel-in">
+        <div class="p-head">
+          <div><h3>Your Zakat</h3><p>Updates live as you type</p></div>
+          <span class="p-ar" aria-hidden="true">زكاة</span>
+        </div>
+        <div class="p-rows">
+          <div class="p-row"><span>Total assets</span><b id="sAssets">£0.00</b></div>
+          <div class="p-row"><span>Less what you owe</span><b id="sLiab">−£0.00</b></div>
+          <div class="p-row net"><span>Net zakatable wealth</span><b id="sNet">£0.00</b></div>
+          <div class="p-row"><span>Nisab <em id="sStd" style="font-style:normal;text-transform:none;letter-spacing:0">— silver</em></span><b id="sNisab">£0.00</b></div>
+        </div>
+        <div class="m-track" id="mTrack">
+          <div class="m-fill" id="mFill"></div>
+          <div class="m-tick" id="mTick"><i>Nisab</i></div>
+        </div>
+        <div class="m-scale"><span>£0</span><span id="mMax">£0</span></div>
+        <div class="chip c-none pop" id="chip"><span class="dot"></span><span id="chipLbl">No zakatable wealth</span></div>
+        <p class="sentence" id="sentence"></p>
+        <div class="p-due">
+          <span class="due-lbl">Zakat due · 2.5%</span>
+          <div class="due-num"><span class="gbp">£</span><span id="sDue">0.00</span></div>
+          <p class="meals" id="meals" style="display:none"></p>
+        </div>
+        <button class="reset" id="reset" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Start over
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============ learn ============ -->
+  <section class="learn">
+    <div class="learn-in">
+    <h2>The details, in plain English</h2>
+    <p class="lk">Short answers to the questions people ask most before they pay.</p>
+
+    <div class="qa">
+      <button class="q" aria-expanded="false"><span class="qn">01</span><span class="qt">What is Zakat?</span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+      <div class="a"><div class="a-in"><p>One of the five pillars of Islam. If your qualifying wealth has stayed above the nisab for a full lunar year (the hawl), you give 2.5% of it to those eligible to receive it — the eight categories named in Qur'an 9:60. It is not charity you choose to give; it is a right owed to those in need.</p></div></div>
+    </div>
+    <div class="qa">
+      <button class="q" aria-expanded="false"><span class="qn">02</span><span class="qt">What is the nisab?</span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+      <div class="a"><div class="a-in"><p>The minimum threshold above which Zakat becomes due: 612.36 grams of silver (£896.93) or 87.48 grams of gold (£8,885.68) as of 09/10/2026. Most UK institutions use the silver standard, because it lowers the threshold so more people pay and more households are helped. This calculator defaults to silver for exactly that reason; switch to gold in step 05 if you follow that view.</p></div></div>
+    </div>
+    <div class="qa">
+      <button class="q" aria-expanded="false"><span class="qn">03</span><span class="qt">Which debts can I deduct?</span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+      <div class="a"><div class="a-in"><p>Debts that fall due within your zakat year: credit cards, overdrafts, unpaid bills, rent arrears and personal loans. For a long mortgage, many scholars allow deducting roughly the next twelve months of payments rather than the whole balance. Student loans are treated differently by different scholars — ask someone knowledgeable if yours is significant.</p></div></div>
+    </div>
+    <div class="qa">
+      <button class="q" aria-expanded="false"><span class="qn">04</span><span class="qt">What about my pension?</span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+      <div class="a"><div class="a-in"><p>Opinions differ. Many scholars count pensions you can access or transfer (an old workplace or personal pension, for example), sometimes reduced for tax. Others exempt pensions entirely until withdrawal. If a pension is a large part of your wealth, ask a scholar you trust — and simply leave the field at zero if you follow the exempt view.</p></div></div>
+    </div>
+    <div class="qa">
+      <button class="q" aria-expanded="false"><span class="qn">05</span><span class="qt">When is my Zakat due?</span><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+      <div class="a"><div class="a-in"><p>Pick a date on the lunar calendar when your wealth first exceeded the nisab — many people choose Ramadan — and recalculate on that anniversary each year, paying promptly. You may pay earlier than due, especially to reach people in urgent need.</p></div></div>
+    </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap f-in">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="5" width="14" height="14"/><rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"/></svg>
+    <div>
+      <p><b>Jakat</b> offers general guidance, not a fatwa or financial advice. Figures depend on the rates you enter — check gold and silver prices on the day you pay, and consult a knowledgeable scholar about your own circumstances.</p>
+      <p class="f-ar">جزاكم الله خيرا</p>
+    </div>
+  </div>
+</footer>
+
+<!-- mobile sticky result bar -->
+<button id="mbar" aria-label="Jump to full Zakat summary">
+  <span class="mb-l"><b>Zakat due</b><i>2.5% · tap for full summary</i></span>
+  <span class="mb-r"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><path d="m18 15-6-6-6 6"/></svg><span id="mDue">£0.00</span></span>
+</button>
+
+<div id="toast" role="status"></div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  const money = v => v.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const state = { standard:'silver', grams:{silver:612.36, gold:87.48}, rates:{silver:1.46471, gold:101.5738} };
+
+  const ASSETS = ['cash','savings','cashOther','goldV','silverV','shares','crypto','stock','owedYou','pension'];
+  const LIABS  = ['cards','arrears','loans','oweOthers'];
+  const SECTIONS = [
+    ['sub1',['cash','savings','cashOther']],
+    ['sub2',['goldV','silverV']],
+    ['sub3',['shares','crypto','stock','owedYou','pension']],
+    ['sub4',['cards','arrears','loans','oweOthers']]
+  ];
+
+  /* ---- input wiring: sanitise, format on blur, live recalc ---- */
+  function clean(el){
+    let v = el.value.replace(/,/g,'').replace(/[^\d.]/g,'');
+    const p = v.split('.');
+    if(p.length > 2) v = p[0] + '.' + p.slice(1).join('');
+    el.value = v;
+    return parseFloat(v) || 0;
+  }
+  function formatBlur(v){
+    if(!v) return '';
+    const parts = String(v).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    return parts.join('.');
+  }
+  const inputs = [...ASSETS, ...LIABS, 'rateGold','rateSilver'].map(id => document.getElementById(id));
+
+  inputs.forEach(el => {
+    el.addEventListener('input', () => {
+      clean(el);
+      if(el.id === 'rateGold')   state.rates.gold   = parseFloat(el.value) || 0;
+      if(el.id === 'rateSilver') state.rates.silver = parseFloat(el.value) || 0;
+      recalc();
+    });
+    el.addEventListener('focus', () => { el.value = el.value.replace(/,/g,''); });
+    el.addEventListener('blur',  () => { clean(el); el.value = formatBlur(parseFloat(el.value) || 0); recalc(); });
+  });
+
+  const val = id => parseFloat((document.getElementById(id).value || '').replace(/,/g,'')) || 0;
+
+  /* ---- animated number display ---- */
+  const anim = { assets:{c:0,f:0,t:0}, liab:{c:0,f:0,t:0}, net:{c:0,f:0,t:0}, nisab:{c:0,f:0,t:0}, due:{c:0,f:0,t:0} };
+  let raf = null, t0 = 0; const DUR = 520;
+
+  function setTargets(o){
+    for(const k in o){ anim[k].f = anim[k].c; anim[k].t = o[k]; }
+    t0 = performance.now();
+    if(!raf) raf = requestAnimationFrame(step);
+  }
+  function step(now){
+    const p = Math.min(1,(now - t0)/DUR), e = 1 - Math.pow(1 - p, 3);
+    for(const k in anim) anim[k].c = anim[k].f + (anim[k].t - anim[k].f) * e;
+    paint();
+    raf = p < 1 ? requestAnimationFrame(step) : null;
+  }
+  function paint(){
+    $('#sAssets').textContent = '£' + money(anim.assets.c);
+    $('#sLiab').textContent   = '−£' + money(Math.max(0, anim.liab.c));
+    $('#sNet').textContent    = '£' + money(anim.net.c);
+    $('#sNisab').textContent  = '£' + money(anim.nisab.c);
+    $('#sDue').textContent    = money(anim.due.c);
+    $('#mDue').textContent    = '£' + money(anim.due.c);
+    const m = anim.due.c >= 5 ? Math.floor(anim.due.c / 5) : 0;
+    const meals = $('#meals');
+    meals.style.display = m > 0 ? '' : 'none';
+    if(m > 0) meals.textContent = '≈ ' + m.toLocaleString('en-GB') + ' iftar meals at £5 each';
+  }
+
+  /* ---- core calculation ---- */
+  function recalc(){
+    const assets = ASSETS.reduce((s,id) => s + val(id), 0);
+    const liab   = LIABS.reduce((s,id) => s + val(id), 0);
+    const net    = assets - liab;
+    const rate   = state.rates[state.standard];
+    const nisab  = state.grams[state.standard] * rate;
+    let due      = (nisab > 0 && net >= nisab) ? net * 0.025 : 0;
+
+    SECTIONS.forEach(([sid, ids]) => {
+      $('#'+sid).textContent = '£' + money(ids.reduce((s,id) => s + val(id), 0));
+    });
+
+    const g = state.grams[state.standard];
+    $('#nisabCalc').innerHTML = g + ' g × £' + rate.toFixed(2) + ' = <b>£' + money(nisab) + '</b>';
+    $('#sStd').textContent = '— ' + state.standard;
+
+    /* mizan scale */
+    const max = Math.max(net, nisab, 100) * 1.06;
+    $('#mFill').style.width = (Math.max(0, Math.min(1, net / max)) * 100) + '%';
+    $('#mTick').style.left  = 'calc(' + (Math.max(0, Math.min(1, nisab / max)) * 100).toFixed(2) + '% - 1px)';
+    $('#mMax').textContent  = '£' + money(max);
+    $('#mTrack').className  = 'm-track ' + (net <= 0 ? 'none' : net < nisab ? 'low' : 'ok');
+
+    /* status chip + sentence */
+    let cls, label, sent;
+    if(nisab <= 0){
+      cls = 'c-low'; label = 'Set today’s rate';
+      sent = 'Enter a gold or silver price per gram in step 05 to work out the nisab.';
+    } else if(net <= 0){
+      cls = 'c-none'; label = 'No zakatable wealth';
+      sent = 'After your debts, there is nothing zakatable to assess this year.';
+    } else if(net < nisab){
+      cls = 'c-low'; label = 'Below nisab';
+      sent = 'You’re £' + money(nisab - net) + ' short of the nisab — no Zakat is due right now.';
+    } else {
+      cls = 'c-ok'; label = 'Zakat is due';
+      sent = 'Your wealth is ' + (net / nisab).toFixed(2) + '× the nisab — Zakat at 2.5% applies.';
+    }
+    const chip = $('#chip');
+    chip.classList.remove('pop'); void chip.offsetWidth;
+    chip.className = 'chip ' + cls + ' pop';
+    $('#chipLbl').textContent = label;
+    $('#sentence').textContent = sent;
+
+    setTargets({ assets, liab, net, nisab, due });
+  }
+
+  /* ---- nisab standard toggle ---- */
+  const seg = $('#seg');
+  seg.querySelectorAll('button[data-std]').forEach(b => b.addEventListener('click', () => {
+    state.standard = b.dataset.std;
+    seg.dataset.std = state.standard;
+    seg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    document.querySelector('.rate-row.gold').classList.toggle('dim',   state.standard !== 'gold');
+    document.querySelector('.rate-row.silver').classList.toggle('dim', state.standard !== 'silver');
+    recalc();
+  }));
+
+  /* ---- accordions ---- */
+  document.querySelectorAll('.q').forEach(q => q.addEventListener('click', () => {
+    const qa = q.parentElement;
+    const open = qa.classList.toggle('open');
+    q.setAttribute('aria-expanded', open);
+    document.querySelectorAll('.qa.open').forEach(o => {
+      if(o !== qa){ o.classList.remove('open'); o.querySelector('.q').setAttribute('aria-expanded','false'); }
+    });
+  }));
+
+  /* ---- reset + toast ---- */
+  let tT;
+  function toast(m){
+    const t = $('#toast'); t.textContent = m; t.classList.add('show');
+    clearTimeout(tT); tT = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  $('#reset').addEventListener('click', () => {
+    inputs.forEach(el => el.value = '');
+    $('#rateGold').value = '101.5738'; $('#rateSilver').value = '1.46471';
+    state.rates = { silver:1.46471, gold:101.5738 };
+    recalc();
+    toast('Cleared — a fresh start.');
+  });
+
+  /* ---- mobile bar ---- */
+  $('#mbar').addEventListener('click', () => $('#summary').scrollIntoView({ behavior:'smooth', block:'start' }));
+
+  recalc();
+</script>
+</body>
+</html>

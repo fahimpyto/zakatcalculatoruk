@@ -1,0 +1,51 @@
+/* Jakat shared styles — vanilla CSS (CDN Tailwind handles utilities) */
+:root {
+  --islamic-green: #059669;
+  --islamic-green-dark: #047857;
+  --islamic-gold: #d4af37;
+  --islamic-dark: #1e293b;
+  --islamic-light: #f8fafc;
+  --islamic-white: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Roboto', system-ui, sans-serif;
+  background-color: var(--islamic-light);
+  color: var(--islamic-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-arabic { font-family: 'Noto Naskh Arabic', serif; }
+
+/* Inputs — 48px touch target, full width inside centered card */
+.field-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 1rem;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.field-input::placeholder { color: #94a3b8; }
+.field-input:focus {
+  outline: none;
+  border-color: var(--islamic-green);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+/* FAQ */
+details.faq-item summary { list-style: none; cursor: pointer; }
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item[open] .faq-chevron { transform: rotate(180deg); }
+.faq-chevron { transition: transform .2s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
